@@ -1,16 +1,16 @@
 
-import { HTMLAttributes, forwardRef } from "react";
+import { HTMLAttributes, forwardRef, ElementType } from "react";
 import { cn } from "@/lib/utils";
 
-interface GlitchTextProps extends HTMLAttributes<HTMLSpanElement> {
+interface GlitchTextProps extends HTMLAttributes<HTMLElement> {
   color?: "cyan" | "magenta" | "yellow";
   as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span";
   intensity?: "low" | "medium" | "high";
 }
 
-const GlitchText = forwardRef<HTMLSpanElement, GlitchTextProps>(
+const GlitchText = forwardRef<HTMLElement, GlitchTextProps>(
   ({ className, color = "cyan", as = "span", intensity = "medium", children, ...props }, ref) => {
-    const Component = as;
+    const Component = as as ElementType;
     
     const getColorClasses = () => {
       switch (color) {

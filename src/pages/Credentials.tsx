@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, Award, Certificate, Star, ChevronRight, ChevronLeft } from "lucide-react";
+import { Trophy, Award, Star, ChevronRight, ChevronLeft, FileCheck } from "lucide-react";
 import CyberButton from "@/components/ui/CyberButton";
 import GlitchText from "@/components/ui/GlitchText";
 import NeonCard from "@/components/ui/NeonCard";
@@ -34,7 +33,7 @@ const achievements = [
     description: "Certificate for developing quantum-resistant encryption protocols.",
     date: "2076.08.15",
     type: "certificate",
-    icon: <Certificate className="text-neon-magenta" size={28} />,
+    icon: <FileCheck className="text-neon-magenta" size={28} />,
     color: "magenta",
   },
   {
@@ -52,7 +51,7 @@ const achievements = [
     description: "Advanced certification in consciousness transfer algorithms.",
     date: "2075.12.10",
     type: "certificate",
-    icon: <Certificate className="text-neon-magenta" size={28} />,
+    icon: <FileCheck className="text-neon-magenta" size={28} />,
     color: "magenta",
   },
   {
@@ -162,7 +161,7 @@ const Credentials = () => {
             Competitions
           </CyberButton>
           <CyberButton
-            variant={filter === "award" ? "cyan" : "outline"}
+            variant={filter === "award" ? "default" : "outline"}
             onClick={() => setFilter("award")}
             className="text-sm"
           >
@@ -174,7 +173,7 @@ const Credentials = () => {
             onClick={() => setFilter("certificate")}
             className="text-sm"
           >
-            <Certificate size={16} className="mr-2" />
+            <FileCheck size={16} className="mr-2" />
             Certifications
           </CyberButton>
         </div>
@@ -185,62 +184,56 @@ const Credentials = () => {
           <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-neon-cyan via-neon-magenta to-neon-yellow md:left-1/2 md:-translate-x-0.5"></div>
           
           {/* Achievements */}
-          <AnimatePresence mode="wait">
-            <div key={activePage} className="space-y-8 relative">
-              {getCurrentPageItems().map((item, index) => (
-                <motion.div 
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className={cn(
-                    "relative flex flex-col md:flex-row gap-4 md:gap-0",
-                    index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                  )}
+          <div className="space-y-8 relative">
+            {getCurrentPageItems().map((item, index) => (
+              <div 
+                key={item.id}
+                className={cn(
+                  "relative flex flex-col md:flex-row gap-4 md:gap-0",
+                  index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+                )}
+              >
+                {/* Timeline node */}
+                <div className="absolute left-4 top-0 w-4 h-4 rounded-full bg-cyber-dark border-2 transform -translate-x-2 md:left-1/2 md:-translate-x-2"
+                  style={{ 
+                    borderColor: item.color === "cyan" ? "#00FFFF" : 
+                                item.color === "magenta" ? "#FF00FF" : "#FFFF00",
+                    boxShadow: `0 0 10px ${item.color === "cyan" ? "#00FFFF" : 
+                                            item.color === "magenta" ? "#FF00FF" : "#FFFF00"}`
+                  }}
+                ></div>
+                
+                {/* Date (mobile) */}
+                <div className="ml-10 md:hidden text-sm text-gray-400">{item.date}</div>
+                
+                {/* Date (desktop) */}
+                <div className="hidden md:block md:w-[calc(50%-20px)] text-right pr-4 pt-3 text-sm text-gray-400">
+                  {index % 2 === 0 ? item.date : ""}
+                </div>
+                
+                {/* Content */}
+                <NeonCard 
+                  color={item.color as "cyan" | "magenta" | "yellow"}
+                  className="ml-10 md:ml-0 md:w-[calc(50%+20px)] md:max-w-[calc(50%+20px)]"
                 >
-                  {/* Timeline node */}
-                  <div className="absolute left-4 top-0 w-4 h-4 rounded-full bg-cyber-dark border-2 transform -translate-x-2 md:left-1/2 md:-translate-x-2"
-                    style={{ 
-                      borderColor: item.color === "cyan" ? "#00FFFF" : 
-                                  item.color === "magenta" ? "#FF00FF" : "#FFFF00",
-                      boxShadow: `0 0 10px ${item.color === "cyan" ? "#00FFFF" : 
-                                              item.color === "magenta" ? "#FF00FF" : "#FFFF00"}`
-                    }}
-                  ></div>
-                  
-                  {/* Date (mobile) */}
-                  <div className="ml-10 md:hidden text-sm text-gray-400">{item.date}</div>
-                  
-                  {/* Date (desktop) */}
-                  <div className="hidden md:block md:w-[calc(50%-20px)] text-right pr-4 pt-3 text-sm text-gray-400">
-                    {index % 2 === 0 ? item.date : ""}
-                  </div>
-                  
-                  {/* Content */}
-                  <NeonCard 
-                    color={item.color as "cyan" | "magenta" | "yellow"}
-                    className="ml-10 md:ml-0 md:w-[calc(50%+20px)] md:max-w-[calc(50%+20px)]"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="p-2 rounded-full bg-cyber-dark">
-                        {item.icon}
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
-                        <p className="text-gray-300 text-sm">{item.description}</p>
-                      </div>
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-full bg-cyber-dark">
+                      {item.icon}
                     </div>
-                  </NeonCard>
-                  
-                  {/* Date (desktop reverse) */}
-                  <div className="hidden md:block md:w-[calc(50%-20px)] text-left pl-4 pt-3 text-sm text-gray-400">
-                    {index % 2 !== 0 ? item.date : ""}
+                    <div>
+                      <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
+                      <p className="text-gray-300 text-sm">{item.description}</p>
+                    </div>
                   </div>
-                </motion.div>
-              ))}
-            </div>
-          </AnimatePresence>
+                </NeonCard>
+                
+                {/* Date (desktop reverse) */}
+                <div className="hidden md:block md:w-[calc(50%-20px)] text-left pl-4 pt-3 text-sm text-gray-400">
+                  {index % 2 !== 0 ? item.date : ""}
+                </div>
+              </div>
+            ))}
+          </div>
           
           {/* Pagination */}
           {totalPages > 1 && (
@@ -279,11 +272,13 @@ const Credentials = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {skills.map((skill, index) => (
-              <motion.div
+              <div
                 key={skill.name}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                animate={{ opacity: isLoaded ? 1 : 0, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                style={{ 
+                  opacity: isLoaded ? 1 : 0, 
+                  transform: isLoaded ? 'translateX(0)' : index % 2 === 0 ? 'translateX(-20px)' : 'translateX(20px)',
+                  transition: `opacity 0.5s, transform 0.5s ${index * 0.1}s` 
+                }}
               >
                 <HolographicEffect 
                   color={skill.color as "cyan" | "magenta" | "mixed"} 
@@ -313,22 +308,21 @@ const Credentials = () => {
                   </div>
                   
                   <div className="h-2 bg-cyber-black/60 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${skill.level}%` }}
-                      transition={{ duration: 1.5, delay: 0.5 + index * 0.1 }}
-                      className="h-full rounded-full"
+                    <div
                       style={{ 
+                        width: `${skill.level}%`,
                         background: `linear-gradient(90deg, ${skill.color === "cyan" ? "#00FFFF" : 
-                                                          skill.color === "magenta" ? "#FF00FF" : "#FFFF00"}80, ${
-                                                          skill.color === "cyan" ? "#00FFFF" : 
-                                                          skill.color === "magenta" ? "#FF00FF" : "#FFFF00"
-                                                      })` 
+                                                        skill.color === "magenta" ? "#FF00FF" : "#FFFF00"}80, ${
+                                                        skill.color === "cyan" ? "#00FFFF" : 
+                                                        skill.color === "magenta" ? "#FF00FF" : "#FFFF00"
+                                                    })`,
+                        transition: `width 1.5s ${0.5 + index * 0.1}s`
                       }}
+                      className="h-full rounded-full"
                     />
                   </div>
                 </HolographicEffect>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

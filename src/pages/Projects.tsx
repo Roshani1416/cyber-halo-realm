@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { Upload, Database, Filter, Search, X, Plus } from "lucide-react";
 import CyberButton from "@/components/ui/CyberButton";
 import NeonCard from "@/components/ui/NeonCard";
@@ -60,28 +59,18 @@ const projectsData = [
   },
 ];
 
-// Framer Motion variants for animations
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
-
 const Projects = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [filteredProjects, setFilteredProjects] = useState(projectsData);
   const [showUpload, setShowUpload] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Animation on mount
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   // Filter projects based on search term and category
   useEffect(() => {
@@ -203,14 +192,22 @@ const Projects = () => {
         
         {/* Projects Grid */}
         {filteredProjects.length > 0 ? (
-          <motion.div 
+          <div 
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            variants={container}
-            initial="hidden"
-            animate="show"
+            style={{
+              opacity: isLoaded ? 1 : 0,
+              transition: 'opacity 0.5s ease-in-out'
+            }}
           >
-            {filteredProjects.map((project) => (
-              <motion.div key={project.id} variants={item}>
+            {filteredProjects.map((project, index) => (
+              <div 
+                key={project.id}
+                style={{
+                  opacity: isLoaded ? 1 : 0,
+                  transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+                  transition: `opacity 0.5s ease-in-out ${index * 0.1}s, transform 0.5s ease-in-out ${index * 0.1}s`
+                }}
+              >
                 <NeonCard 
                   color={project.color as "cyan" | "magenta" | "yellow"} 
                   className="h-full"
@@ -236,7 +233,6 @@ const Projects = () => {
                     </div>
                     <p className="text-gray-300 mb-4">{project.description}</p>
                     <CyberButton 
-                      color={project.color as "cyan" | "magenta" | "yellow"} 
                       variant={project.color as "default" | "magenta" | "yellow"} 
                       className="w-full text-sm"
                     >
@@ -244,18 +240,24 @@ const Projects = () => {
                     </CyberButton>
                   </div>
                 </NeonCard>
-              </motion.div>
+              </div>
             ))}
             
             {/* Add Project Card */}
-            <motion.div variants={item}>
+            <div 
+              style={{
+                opacity: isLoaded ? 1 : 0,
+                transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+                transition: `opacity 0.5s ease-in-out ${filteredProjects.length * 0.1}s, transform 0.5s ease-in-out ${filteredProjects.length * 0.1}s`
+              }}
+            >
               <div className="border-2 border-dashed border-gray-500 rounded-md h-full flex flex-col items-center justify-center p-6 text-center bg-cyber-dark/30 hover:bg-cyber-dark/50 transition-all cursor-pointer">
                 <Plus className="text-neon-cyan mb-4" size={40} />
                 <h3 className="text-xl font-bold text-white mb-2">Add New Project</h3>
                 <p className="text-gray-400">Upload your own creation to the network</p>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         ) : (
           <div className="text-center py-16">
             <Database className="mx-auto text-gray-500 mb-4" size={48} />

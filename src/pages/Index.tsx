@@ -1,7 +1,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { useInView } from "react-intersection-observer";
 import { ArrowRight, Terminal, Zap, Shield, Code } from "lucide-react";
 import GlitchText from "@/components/ui/GlitchText";
 import CyberButton from "@/components/ui/CyberButton";
@@ -13,12 +12,9 @@ import { cn } from "@/lib/utils";
 const Index = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [loaded, setLoaded] = useState(false);
+  const [featuresInView, setFeaturesInView] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
-
-  const { ref: featuresRef, inView: featuresInView } = useInView({
-    triggerOnce: false,
-    threshold: 0.1,
-  });
+  const featuresRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setLoaded(true);
@@ -28,9 +24,26 @@ const Index = () => {
     };
     
     window.addEventListener('mousemove', handleMouseMove);
+
+    // Simple intersection observer for features section
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setFeaturesInView(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (featuresRef.current) {
+      observer.observe(featuresRef.current);
+    }
     
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      if (featuresRef.current) {
+        observer.unobserve(featuresRef.current);
+      }
     };
   }, []);
 
@@ -182,14 +195,12 @@ const Index = () => {
             {features.map((feature, index) => (
               <div 
                 key={index}
-                className={cn(
-                  "transition-all duration-700 transform",
-                  featuresInView 
-                    ? "opacity-100 translate-y-0" 
-                    : "opacity-0 translate-y-20",
-                  { "transition-delay-300": index === 1 || index === 3 },
-                  { "transition-delay-100": index === 0 || index === 2 }
-                )}
+                className="transition-all duration-700 transform"
+                style={{
+                  opacity: featuresInView ? 1 : 0,
+                  transform: featuresInView ? 'translateY(0)' : 'translateY(20px)',
+                  transitionDelay: `${index * 100}ms`,
+                }}
               >
                 <HolographicEffect 
                   color={feature.color as "cyan" | "magenta" | "mixed"} 
